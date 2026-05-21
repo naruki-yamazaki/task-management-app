@@ -1,0 +1,24 @@
+{
+  "name": "task-management-app",
+  "version": "1.0.0",
+  "description": "EXPREESとPostgreSQLを初めて使いたいので、タスク管理アプリを作ることにしました。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naruki-yamazaki/task-management-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/naruki-yamazaki/task-management-app/issues"
+  },
+  "homepage": "https://github.com/naruki-yamazaki/task-management-app#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
