@@ -31,6 +31,26 @@ app.get('/api/tasks', async (req, res) => {
     }
 });
 
+//POST API
+app.post('/api/tasks', async (req, res) => {
+    try {
+        const { title, user_id } = req.body;
+
+        const query = 'INSERT INTO task (title, user_id, status) VALUES ($1, $2, 0) RETURNING *;';
+        const values = [title, user_id];
+
+        const result = await pool.query(query, values);
+
+
+        res.status(201).json(result.rows[0])
+        
+    } catch (err) {
+        console.error("データ追加エラー:", err)
+        res.status(500).json({error: "データベースにデータを追加できませんでした"});
+
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`サーバーが起動しました: http://localhost:${PORT}`);
 });
