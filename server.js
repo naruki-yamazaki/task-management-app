@@ -49,7 +49,7 @@ app.post('/api/tasks', async (req, res) => {
 });
 
 //DELETE API
-app.delete('/api/v1/tasks/{task_id}', async (req,res) => {
+app.delete('/api/tasks/:task_id', async (req,res) => {
     try {
         const { task_id } = req.params;
 
