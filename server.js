@@ -15,7 +15,7 @@ const pool = new Pool({
 });
 
 // GET API
-app.get('/api/task', async (req, res) => {
+app.get('/api/tasks', async (req, res) => {
     try {
         // データベースに現在の時刻を持ってくるように命令を送る
         const result = await pool.query('SELECT * FROM task ORDER BY task_id ASC;');
@@ -29,7 +29,7 @@ app.get('/api/task', async (req, res) => {
 });
 
 //POST API
-app.post('/api/task', async (req, res) => {
+app.post('/api/tasks', async (req, res) => {
     try {
         const { title, user_id } = req.body;
 
@@ -45,6 +45,30 @@ app.post('/api/task', async (req, res) => {
         console.error("データ追加エラー:", err)
         res.status(500).json({error: "データベースにデータを追加できませんでした"});
 
+    }
+});
+
+//DELETE API
+app.delete('/api/v1/tasks/{task_id}', async (req,res) => {
+    try {
+        const { task_id } = req.params;
+
+        const query = 'DELETE FROM task WHERE task_id = $1 RETURNING *;';
+        const values = [task_id];
+
+        const result = await pool.query(query,values);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "指定されたタスクが見つかりませんでした"})
+        }
+
+        res.status(200).json({
+            message: "タスクを削除",
+            deleted_task: result.rows
+        });
+    } catch (err) {
+        console.error("データ削除エラー");
+        res.status(500).json({ error: "データベースからデータを削除できませんでした"})
     }
 });
 
