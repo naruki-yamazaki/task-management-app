@@ -5,6 +5,9 @@ const { Pool } = require('pg'); // PostgreSQLに接続するための部品
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
+
+
 // PostgreSQLへの接続設定（.envファイルから自動で読み込まれます）
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -38,8 +41,9 @@ app.post('/api/tasks', async (req, res) => {
 
         const result = await pool.query(query, values);
 
+        res.status(201).json(result.rows);
 
-        res.status(201).json(result.rows[0])
+
         
     } catch (err) {
         console.error("データ追加エラー:", err)
@@ -59,7 +63,7 @@ app.delete('/api/tasks/:task_id', async (req,res) => {
         const result = await pool.query(query,values);
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: "指定されたタスクが見つかりませんでした"})
+            return res.status(404).json({ error: "指定されたタスクが見つかりませんでした"});
         }
 
         res.status(200).json({
@@ -68,8 +72,35 @@ app.delete('/api/tasks/:task_id', async (req,res) => {
         });
     } catch (err) {
         console.error("データ削除エラー");
-        res.status(500).json({ error: "データベースからデータを削除できませんでした"})
+        res.status(500).json({ error: "データベースからデータを削除できませんでした"});
     }
+});
+
+//PATCH API
+app.patch('/api/tasks/:task_id', async (req,res) => {
+    try{
+        const { task_id } = req.params;
+        const { status } = req.body;
+
+        const query = 'UPDATE task SET status = $1 WHERE task_id = $2 RETURNING *;';
+        const values = [status,task_id];
+
+        const result = await pool.query(query,values);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({error: "指定されたタスクが見つかりませんでした"});
+        }
+
+        res.status(200).json({
+            message: "タスクを編集",
+            patch_task: result.rows
+        });
+    } catch(err){
+        console.error("データ編集エラー");
+        res.status(500).json({error: "データベースからデータを編集できませんでした"})
+
+    }
+
 });
 
 app.listen(PORT, () => {
