@@ -15,7 +15,7 @@ const pool = new Pool({
 });
 
 // GET API
-app.get('/api/tasks', async (req, res) => {
+app.get('/api/task', async (req, res) => {
     try {
         // データベースに現在の時刻を持ってくるように命令を送る
         const result = await pool.query('SELECT * FROM task ORDER BY task_id ASC;');
@@ -29,7 +29,7 @@ app.get('/api/tasks', async (req, res) => {
 });
 
 //POST API
-app.post('/api/tasks', async (req, res) => {
+app.post('/api/task', async (req, res) => {
     try {
         const { title, user_id } = req.body;
 
