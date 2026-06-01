@@ -14,16 +14,13 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
-// 【テスト用API】ブラウザでアクセスしたときに、データベースと通信する
+// GET API
 app.get('/api/tasks', async (req, res) => {
     try {
         // データベースに「現在の時刻を教えて」と命令（SQL）を送る
         const result = await pool.query('SELECT * FROM task ORDER BY task_id ASC;');
 
-        // res.json({
-        //     message: "DockerのPostgreSQLと通信成功しました！",
-        //     db_time: result.rows[0].now
-        // });
+        
         res.json(result.rows);
     } catch (err) {
         console.error("接続エラー:", err);
