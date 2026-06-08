@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 
-// PostgreSQLへの接続設定（.envファイルから自動で読み込まれます）
+// PostgreSQLへの接続設定
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -35,6 +35,16 @@ app.get('/api/tasks', async (req, res) => {
 app.post('/api/tasks', async (req, res) => {
     try {
         const { title, user_id } = req.body;
+
+        if (!title || title.trim() === '' ) {
+            return res.status(400).json({ error: "タスクのタイトルを入力してください"})
+        }
+        if (!user_id) {
+            return res.status(400).json({ error: "ユーザーIDが指定されていません"})
+        }
+        if (title.length > 100) {
+            return res.status(400).json({ error: "タイトルは100文字以内で入力してください"})
+        }
 
         const query = 'INSERT INTO task (title, user_id, status) VALUES ($1, $2, 0) RETURNING *;';
         const values = [title, user_id];
@@ -81,6 +91,10 @@ app.patch('/api/tasks/:task_id', async (req,res) => {
     try{
         const { task_id } = req.params;
         const { status } = req.body;
+
+        if (status === undefined || typeof status !== 'number') {
+            return res.status(400).json({ error : "正しいステータスを指定してください"})
+        }
 
         const query = 'UPDATE task SET status = $1 WHERE task_id = $2 RETURNING *;';
         const values = [status,task_id];
