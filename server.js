@@ -121,7 +121,8 @@ app.patch('/api/tasks/:task_id', async (req,res) => {
 app.get('/api/categories', async (req, res) => {
     try {
         // categories テーブルからすべてのデータをID順に取得
-        const result = await pool.query('SELECT * FROM categories ORDER BY id ASC;');
+        const result = await pool.query('SELECT * FROM categories ORDER BY category_id ASC;');
+
         
         // 取得したデータをJSON形式でクライアントに返す
         res.json(result.rows);
