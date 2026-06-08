@@ -117,6 +117,20 @@ app.patch('/api/tasks/:task_id', async (req,res) => {
 
 });
 
+//カテゴリー一覧取得 API
+app.get('/api/categories', async (req, res) => {
+    try {
+        // categories テーブルからすべてのデータをID順に取得
+        const result = await pool.query('SELECT * FROM categories ORDER BY id ASC;');
+        
+        // 取得したデータをJSON形式でクライアントに返す
+        res.json(result.rows);
+    } catch (err) {
+        console.error("カテゴリー取得エラー:", err);
+        res.status(500).json({ error: "カテゴリー情報を取得できませんでした" });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`サーバーが起動しました: http://localhost:${PORT}`);
 });
